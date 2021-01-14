@@ -1,0 +1,46 @@
+name: build
+
+on: push
+
+jobs:
+  test:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2
+      - name: Setup Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: '^1.15.6'
+      - name: Run unit tests
+        run: go test -v -race -coverprofile=coverage.txt -covermode=atomic -coverpkg=./... ./...
+      - name: Report coverage
+        run: go tool cover -func=coverage.txt
+
+  build:
+    runs-on: ubuntu-20.04
+    env:
+      BINARY_NAME: htmltest-linux
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2
+      - name: Setup Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: '^1.15.6'
+      - name: Build
+        run: go build -ldflags "-X main.date=`date -u +%Y-%m-%dT%H:%M:%SZ` -X main.version=`git describe --tags`" -o bin/$BINARY_NAME -x main.go
+      - name: Upload binary
+        uses: actions/upload-artifact@v2
+        with:
+          name: htmltest-linux
+          path: bin/${{ env.BINARY_NAME }}
+      - name: Print usage and version
+        run: |
+          bin/$BINARY_NAME -h  # Print usage
+          bin/$BINARY_NAME -v  # Print version
+      - name: Test running binary against fixtures
+        run: |
+          bin/$BINARY_NAME -c htmldoc/fixtures/conf.yaml -l0 # Run config
+          bin/$BINARY_NAME htmldoc/fixtures/documents/dir1 # Run on dir
+          bin/$BINARY_NAME htmltest/fixtures/links/head_link_href.html # Run on file
