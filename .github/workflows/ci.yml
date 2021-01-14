@@ -4,7 +4,10 @@ on: push
 
 jobs:
   test:
-    runs-on: ubuntu-20.04
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2
@@ -18,7 +21,10 @@ jobs:
         run: go tool cover -func=coverage.txt
 
   build:
-    runs-on: ubuntu-20.04
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ ubuntu-latest, macos-latest, windows-latest ]
     env:
       BINARY_NAME: htmltest-linux
     steps:
