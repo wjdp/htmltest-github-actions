@@ -26,10 +26,14 @@ jobs:
       matrix:
         os: [ ubuntu-latest, macos-latest ]
     env:
-      BINARY_NAME: htmltest-linux
+      BINARY_NAME: htmltest-${{ matrix.os }}
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Fetch tags
+        run: git fetch --force --tags
       - name: Setup Go
         uses: actions/setup-go@v2
         with:
