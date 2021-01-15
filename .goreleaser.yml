@@ -40,7 +40,7 @@ archives:
 release:
   github:
     owner: wjdp
-    name: htmltest
+    name: htmltest-github-actions
 
   draft: true
 
