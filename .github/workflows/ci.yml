@@ -43,7 +43,7 @@ jobs:
       - name: Upload binary
         uses: actions/upload-artifact@v2
         with:
-          name: htmltest-linux
+          name: ${{ env.BINARY_NAME }}
           path: bin/${{ env.BINARY_NAME }}
       - name: Print usage and version
         run: |
