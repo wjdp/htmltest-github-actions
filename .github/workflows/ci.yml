@@ -107,6 +107,8 @@ jobs:
     runs-on: ubuntu-latest
     if: startsWith(github.ref, 'refs/tags/')
     needs: [ test, build ]
+    env:
+      DOCKER_REPO: wjdp/htmltest-ci-test
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2
@@ -130,7 +132,8 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           push: true
-          tags: wjdp/htmltest-ci-test:${{ env.GIT_VERSION }}
+          tags: ${{ env.DOCKER_REPO }}:${{ env.GIT_VERSION }}
+          cache-from: ${{ env.DOCKER_REPO }}:latest
           build-args: |
             VERSION=${{ env.GIT_VERSION }}
             GO_VERSION=${{ env.GO_VERSION }}
