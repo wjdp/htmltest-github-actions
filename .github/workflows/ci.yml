@@ -6,6 +6,17 @@ env:
   GO_VERSION: '^1.15.6'
 
 jobs:
+  git-describe:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Fetch tags
+        run: git fetch --force --tags
+      - run: git describe --tags
+
   test:
     runs-on: ${{ matrix.os }}
     strategy:
