@@ -36,7 +36,7 @@ type HTMLTest struct {
 // Test : Given user options run htmltest and return a pointer to the test
 // object.
 func Test(optsUser map[string]interface{}) (*HTMLTest, error) {
-	hT := HTMLTest{}
+	hT :=  HTMLTest{}
 
 	// If FilePath set, modify FileExtension
 	if optsUser["FilePath"] != nil {

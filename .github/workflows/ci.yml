@@ -76,6 +76,12 @@ jobs:
     runs-on: ubuntu-latest
     needs: [ test, build ]
     steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Fetch tags
+        run: git fetch --force --tags
       - name: Run GoReleaser
         uses: goreleaser/goreleaser-action@v2
         with:
