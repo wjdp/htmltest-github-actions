@@ -2,6 +2,9 @@ name: build
 
 on: push
 
+env:
+  GO_VERSION: '^1.15.6'
+
 jobs:
   test:
     runs-on: ${{ matrix.os }}
@@ -15,7 +18,7 @@ jobs:
       - name: Setup Go
         uses: actions/setup-go@v2
         with:
-          go-version: '^1.15.6'
+          go-version: ${{ env.GO_VERSION }}
       - name: Run unit tests
         run: go test -v -race -coverprofile=coverage.txt -covermode=atomic -coverpkg=./... ./...
       - name: Report coverage
@@ -37,7 +40,7 @@ jobs:
       - name: Setup Go
         uses: actions/setup-go@v2
         with:
-          go-version: '^1.15.6'
+          go-version: ${{ env.GO_VERSION }}
       - name: Set binary name
         run: echo "BINARY_NAME=htmltest-${{ matrix.os }}-$(echo $GITHUB_REF | cut -d'/' -f 3)-$(echo $GITHUB_SHA | cut -c1-8)" >> $GITHUB_ENV
       - name: Build
@@ -56,6 +59,18 @@ jobs:
           bin/$BINARY_NAME -c htmldoc/fixtures/conf.yaml -l0 # Run config
           bin/$BINARY_NAME htmldoc/fixtures/documents/dir1 # Run on dir
           bin/$BINARY_NAME htmltest/fixtures/links/head_link_href.html # Run on file
+
+  fmt:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2
+      - name: Setup Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: ${{ env.GO_VERSION }}
+      - name: gofmt
+        run: test -z "$(gofmt -d .)"
 
   release:
     runs-on: ubuntu-latest
